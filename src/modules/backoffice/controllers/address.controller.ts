@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Put, Delete, Param, UseInterceptors, HttpException, HttpStatus } from "@nestjs/common";
-import { Result } from "../models/result.model";
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseInterceptors } from "@nestjs/common";
 import { ValidatorInterceptor } from "src/interceptors/validator.interceptor";
-import { Address } from "../models/address.model";
 import { CreateAddressContract } from "../contracts/address/create-address.contract";
-import { AddressService } from "../services/address.service";
 import { AddressType } from "../enums/address-type.enum";
+import { Address } from "../models/address.model";
+import { Result } from "../models/result.model";
+import { AddressService } from "../services/address.service";
 
 @Controller('v1/addresses')
 export class AddressController {
@@ -31,6 +31,16 @@ export class AddressController {
             throw new Result(null, true, model, null);
         } catch (error) {
             throw new HttpException(new Result('Não foi possivel adicionar seu endereço', false, null, error), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Get('search/:zipcode')
+    async search(@Param('zipcode') zipcode) {
+        try {
+            const response = await this.service.getAddressByZipCode(zipcode).toPromise();
+            return new Result(null, true, response.data, null);
+        } catch (error) {
+            throw new HttpException(new Result('Não foi possível localizar seu endereço', false, null, error), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -24,7 +24,7 @@ export class PetController {
 
     @Put(':document/pets/:id')
     @UseInterceptors(new ValidatorInterceptor(new CreatePetContract()))
-    async updatePet(@Param('document') document, @Param('id') id, @Body() model: pet) {
+    async updatePet(@Param('document') document, @Param('id') id, @Body() model: Pet) {
         try {
             await this.service.update(document, id, model);
             throw new Result(null, true, model, null);
